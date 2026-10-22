@@ -1,0 +1,7 @@
+# fleet — autonomous rig task wiring (Phase-B).
+# bin/run = dry-run benchmark plan (default) / --full real benchmark; bin/check = build+plan gate.
+
+[tasks]
+run = "./bin/run"
+check = "./bin/check"
+dry-run = "bun run fleet_config_ranker.ts --dry-run"

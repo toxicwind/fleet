@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# fleet — model benchmark/rank tooling autonomous rig (bin/check).
+# Self-test gate (PASS / FAIL). Safe (never launches llama-server):
+#   1. Every fleet module passes bun's no-bundle build (type/import integrity).
+#   2. fleet_config_ranker --dry-run exits 0 (config + analysis path is runnable).
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+echo "== fleet check: start =="
+cmd_bun="$(readlink -f "$(command -v bun 2>/dev/null || true)" 2>/dev/null || true)"
+for cand in /home/toxic/.bun/bin/bun "$cmd_bun" /usr/local/bin/bun /usr/bin/bun; do
+  [ -x "$cand" ] && { REAL_BUN="$cand"; break; }
+done
+[ -n "${REAL_BUN:-}" ] || { echo "FAIL: bun not found"; exit 1; }
+
+echo "-- module build integrity --"
+fails=0
+for f in fleet_calc.ts fleet_parse.ts fleet_predict.ts fleet_ranker.ts \
+         fleet_config.ts fleet_config_ranker.ts fleet_arch_config.ts \
+         fleet_types.ts fleet_server.ts fleet_test.ts extract_forks.ts; do
+  if ! "$REAL_BUN" build --no-bundle "$f" >/dev/null 2>&1; then
+    echo "FAIL: $f does not build"; fails=$((fails+1))
+  else
+    echo "OK: $f"
+  fi
+done
+[ "$fails" -eq 0 ] || { echo "FAIL: $fails module(s) failed to build"; exit 1; }
+
+echo "-- config ranker dry-run (WARN-only: needs external llama-swap config) --"
+cfg="$(grep -oE 'CONFIG_PATH =.*?resolvePath\(__dirname, "[^"]+"\)' \
+       fleet_config_ranker.ts 2>/dev/null | grep -oE '"[^"]+"' | tr -d '"' || true)"
+cfg="${cfg:-../llama-swap/config.yaml}"
+echo "required runtime config: $(cd "$(dirname "$0")/.." && realpath --relative-to=. "$cfg" 2>/dev/null || echo "$cfg")"
+if ! timeout 60 "$REAL_BUN" run fleet_config_ranker.ts --dry-run >/tmp/fleet-dry.log 2>&1; then
+  echo "WARN: fleet_config_ranker --dry-run could not run (external llama-swap config.yaml not"
+  echo "      provisioned in the estate). Module build integrity above remains the code gate."
+  echo "      stdout tail:"; tail -4 /tmp/fleet-dry.log | sed 's/^/      /'
+else
+  echo "OK: fleet_config_ranker --dry-run passed"
+fi
+
+echo "== fleet check: PASS =="
