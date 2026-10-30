@@ -1,0 +1,121 @@
+{
+  "product": "fleet",
+  "path": "/home/toxic/pens/ranch/products/fleet",
+  "files": 16,
+  "detected_at": "2026-10-30T06:11:06.586815Z",
+  "env_vars": {
+    "CONFIG_PATH": [
+      "fleet_config_ranker.ts"
+    ],
+    "FLEET_CTX_PROBES": [
+      "fleet_config_ranker.ts",
+      "fleet_ranker.ts"
+    ],
+    "FLEET_PORT_START": [
+      "fleet_config_ranker.ts"
+    ],
+    "FLEET_RESULTS": [
+      "fleet_config_ranker.ts",
+      "fleet_ranker.ts"
+    ],
+    "HOME": [
+      "fleet_config.ts",
+      "fleet_ranker.ts",
+      "fleet_universal_maximal_corrected.ts"
+    ],
+    "LLAMA_SWAP_CONFIG": [
+      "extract_forks.ts"
+    ],
+    "MODEL_DIR": [
+      "fleet_config_ranker.ts",
+      "fleet_ranker.ts"
+    ],
+    "MODEL_PATH": [
+      "fleet_ranker.ts"
+    ],
+    "MODEL_URL": [
+      "fleet_ranker.ts"
+    ],
+    "PORT": [
+      "fleet_config_ranker.ts",
+      "fleet_ranker.ts",
+      "fleet_server.ts",
+      "fleet_test.ts"
+    ],
+    "PORT_RANGE_END": [
+      "fleet_config_ranker.ts"
+    ],
+    "PORT_RANGE_START": [
+      "fleet_config_ranker.ts"
+    ],
+    "RANK_PORT": [
+      "fleet_ranker.ts"
+    ],
+    "REPORT": [
+      "fleet_universal_maximal_corrected.ts"
+    ],
+    "SCAN_DIR": [
+      "fleet_ranker.ts"
+    ],
+    "SCRATCH": [
+      "bench-forks.sh"
+    ],
+    "UPSTREAM": [
+      "fleet_ranker.ts"
+    ],
+    "arch": [
+      "fleet_universal_maximal_corrected.ts"
+    ],
+    "ctx": [
+      "fleet_config_ranker.ts"
+    ],
+    "dryRun": [
+      "fleet_config_ranker.ts"
+    ],
+    "estate": [
+      "extract_forks.ts"
+    ],
+    "get": [
+      "bench-forks.sh"
+    ],
+    "maxSafe": [
+      "fleet_config_ranker.ts"
+    ],
+    "mlaMode": [
+      "fleet_predict.ts"
+    ],
+    "model": [
+      "fleet_universal_maximal_corrected.ts"
+    ],
+    "modelFile": [
+      "fleet_config_ranker.ts"
+    ],
+    "name": [
+      "extract_forks.ts",
+      "fleet_config_ranker.ts",
+      "fleet_test.ts"
+    ],
+    "outPath": [
+      "extract_forks.ts",
+      "fleet_config_ranker.ts"
+    ],
+    "parallelCount": [
+      "fleet_config_ranker.ts"
+    ],
+    "port": [
+      "fleet_config_ranker.ts"
+    ],
+    "resolved": [
+      "extract_forks.ts"
+    ],
+    "safetyMargin": [
+      "fleet_predict.ts"
+    ],
+    "tps": [
+      "fleet_config_ranker.ts"
+    ],
+    "vramMb": [
+      "fleet_config_ranker.ts"
+    ]
+  }
+}
