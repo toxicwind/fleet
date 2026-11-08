@@ -10,6 +10,7 @@
 !package.json
 !mise.toml
 !AGENTS.md
+!CHANGELOG.md
 !bin/
 !bin/**
 !docs/
