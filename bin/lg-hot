@@ -1,0 +1,69 @@
+#!/usr/bin/env bun
+/**
+ * lg-hot — Live-Reload Dev & Blue-Green TV Bridge for SLATE WebOS.
+ *
+ * Thin CLI over @fleet/lg-hot primitives:
+ *   1. Serves SLATE app/ with fresh-per-request reads + live-reload SSE shim
+ *   2. Watches lg-fleet/src/ux, packages/netflix-ux/src, app/mock for changes
+ *   3. On edit: rebuilds src/ux/index.ts -> app/dist/slate-ux.js, syncs to TV,
+ *      broadcasts SSE reload
+ *   4. Exposes /__tv/* Luna Bus RPC endpoints (state, launch, toast, sync)
+ *
+ * Usage:
+ *   bun bin/lg-hot [--port 18080] [--host 0.0.0.0] [--app <path>] [--tv-ip 10.0.0.176] [--open]
+ */
+
+import { resolve } from "node:path";
+import { createServer, type ServerConfig } from "../src/server";
+import { tvSsh, DEFAULT_TV_IP, resolveKeyPath } from "../src/tv-ssh";
+
+const args = process.argv.slice(2);
+const flagVal = (name: string, dflt: string) => {
+  const i = args.indexOf(name);
+  return i >= 0 && i + 1 < args.length ? args.splice(i, 2)[1]! : dflt;
+};
+const has = (name: string) => args.includes(name);
+
+const PORT = Number(flagVal("--port", "18080"));
+const HOST = flagVal("--host", "0.0.0.0");
+const APP = resolve(flagVal("--app", "/home/toxic/pens/fleet/products/nuvio-family/nuvio/nuvio-webos/app"));
+const LG_FLEET = resolve(flagVal("--lg-fleet", "/home/toxic/pens/fleet/products/lg-fleet"));
+const TV_IP = flagVal("--tv-ip", process.env.TV_IP ?? DEFAULT_TV_IP);
+const TV_KEY = flagVal("--tv-key", process.env.LG_TV_SSH_KEY ?? `${process.env.HOME ?? "/home/toxic"}/.ssh/lg-tv_webos_trad`);
+const openBrowser = has("--open");
+
+const TV_PORT = "9922";
+const TV_APP_DIR = "/media/developer/apps/usr/palm/applications/com.toxicwind.slate";
+
+const config: ServerConfig = {
+  port: PORT,
+  host: HOST,
+  app: APP,
+  lgFleet: LG_FLEET,
+  tv: { ip: TV_IP, port: Number(TV_PORT), keyPath: TV_KEY, appDir: TV_APP_DIR },
+  openBrowser,
+};
+
+try {
+  resolveKeyPath(TV_KEY);
+} catch (e) {
+  console.error(`[lg-hot] FATAL: ${(e as Error).message}`);
+  process.exit(1);
+}
+
+const server = createServer(config);
+
+console.log(
+  `lg-hot: serving ${APP} on http://${HOST}:${PORT} ` +
+  `(BLUE->GREEN live TV sync @ ${TV_IP}:${TV_PORT} + Luna RPC)`
+);
+
+process.on("SIGINT", () => {
+  console.log("\n[lg-hot] shutting down...");
+  server.stop();
+  process.exit(0);
+});
+process.on("SIGTERM", () => {
+  server.stop();
+  process.exit(0);
+});
