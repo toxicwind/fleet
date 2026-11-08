@@ -13,3 +13,6 @@ Pen-level log of fleet device/product changes. Product repos carry their own his
 - Namespace note: pitchfork defines only estate/geode/barn/ranch namespaces; fleet-pen daemons register in the estate monolith by absolute path and are addressed `estate/<name>` (fleet's own `pitchfork.toml` stays an empty shell — no second truth).
 
 - **fleet-tv: esencial M3U + XMLTV EPG seeding (seeder v2)** — one-shot per install, idempotent, live-verified on the wuyishan TV; Xtream audit 56/60 alive, 4 dead parked (docs: devices/android-fleet/docs/hisense-wuyishan.md addendum 7).
+
+- **nuvio-tv-fleet max-auto (2026-11-09)** — StreamProbe (/live classification, HttpURLConnection exact codes, 302-token follow, VLC UA for xtream), mirror [Opc.N] fallback with per-channel index, stream-viability bouncer filter, PanelDim (long-press PLAY = panel floor brightness, "black-but-usable"), deploy script scripts/deploy-fleet-tv.sh. Commits 06a8e61c5..3bf301dc3.
+- **Xtream stream-gate recon** — player_api auth ≠ playable; N1 edge 407s all clients; working flow = 302→token→LB with VLC/3.0.20 UA (android-iptv m3u8+ts proven); PlayTorrio finder audit (login-verifier gap + its VLC _isAlive is right). Evidence: android-fleet docs/evidence/xtream-stream-gate-recon-20261108.md, playtorrio-xtream-finder-audit-20261109.md.
