@@ -11,3 +11,5 @@ Pen-level log of fleet device/product changes. Product repos carry their own his
   - Evidence archived: `devices/android-fleet/docs/evidence/2026-11-08-shizuku-black-screen/` (moved from `/home/toxic/tmp/hisense-shizuku-20261108`, checksums in MANIFEST.md).
   - Recon updated: `devices/android-fleet/docs/hisense-wuyishan.md` addendum 6 (start contract, standby semantics, grants correction, /data 68%).
 - Namespace note: pitchfork defines only estate/geode/barn/ranch namespaces; fleet-pen daemons register in the estate monolith by absolute path and are addressed `estate/<name>` (fleet's own `pitchfork.toml` stays an empty shell — no second truth).
+
+- **fleet-tv: esencial M3U + XMLTV EPG seeding (seeder v2)** — one-shot per install, idempotent, live-verified on the wuyishan TV; Xtream audit 56/60 alive, 4 dead parked (docs: devices/android-fleet/docs/hisense-wuyishan.md addendum 7).
