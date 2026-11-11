@@ -2,40 +2,65 @@
 
 Hardware devices, TV runtimes, and mobile clients across the estate.
 
-One of the estate's five pens (`pens/{estate,geode,barn,ranch,olympus}`).
-Every pen has the same shape: `devices/` for peer standalone device
-checkouts, `docs/` for pen-owned documentation, and a `bin/` entrypoint
-surface that is symlinked into `~/.local/bin` and pinned by the estate-ops
-manifest. This pen owns hardware devices, so its checkouts are called
-`devices/` rather than `products/`.
-
-## Devices
-
-| Device | Subdir | Port | Language | Notes |
-|---|---|---|---|---|
-| Android fleet | `android-fleet/` | 25245 (flotilla-mcp) | Bun/TS + Kotlin | Pixel 9 Pro XL + Google TV; keepalive + flotilla MCP daemons |
-| Android MCP | `android-mcp/` | — | TS (Node 22) | ADB device/UI/app control MCP; device profiles (Hisense TV, Pixel 9 Pro XL) |
-| Android activity MCP | `android-activity-mcp/` | — | TS (Node 22) | activity enumerate/cache/launch over ADB; JSON activity manifest; fork of android-mcp |
-| Fleet chat | `fleet-chat/` | — | Bun/TS | delendai orchestrated chat |
-| Fleet ops | `fleet-ops/` | — | Python/TS | watchdog + io-governor |
-| Kodi fleet | `kodi-fleet/` | 8080 (RPC) | Python | CoreELEC 246 + Android-TV 225 addons |
-| LG fleet | `lg-fleet/` | — | Bun/TS + webOS | LG TV lane (key/deploy/slate) |
-| LG hot | `lg-hot/` | 18080 | Bun/TS | live-reload + blue-green sync bridge |
+This pen owns physical hardware, so its checkouts live under `devices/`.
+Each device is a **peer standalone checkout** (referenced-not-owned); the pen
+tracks only its own metadata, `bin/`, and `docs/`. Devices are grouped by
+**platform** so the fleet scales without a flat pile of unrelated repos.
 
 ## Layout
 
 ```text
 fleet/
-  .gitignore    kitchen-sink `*` + whitelist (submoduleless doctrine)
-  README.md     this file — role, member table, ports, languages
-  LICENSE
-  package.json
-  mise.toml
-  AGENTS.md
-  bin/          entrypoint symlink surface -> ~/.local/bin
-  devices/      peer standalone device checkouts (auto-ignored, never tracked)
-  docs/         pen-owned documentation
+  devices/
+    android-fleet/   ← ALL Android OS work (ADB-driven): Pixel 9 Pro XL + Hisense TV + OwnTV
+      products/      ← every Android product consolidated (MCP servers, IPTV apps, control plane)
+    kodi/            ← Kodi addon fleet (CoreELEC 246 + Android-TV 225)
+    ops/             ← fleet operations (chat, watchdog)
+    webos/           ← LG webOS TVs + AV (lg-fleet, lg-hot, marantz-audyssey)
+  ssot/              ← single source of truth (devices, ports, identities)
+  docs/              ← pen-owned documentation
+  bin/               ← entrypoint symlink surface -> ~/.local/bin
 ```
+
+## Devices
+
+### `android-fleet/` — Android OS (ADB-driven)
+
+The primary Android repo: Pixel 9 Pro XL (auth vault, wireless ADB) + Hisense
+SmartTV 4K FFM `wuyishan` (10.0.0.225, OwnTV IPTV host). All Android device
+work is consolidated here as `products/`:
+
+| Product | Port | Language | Purpose |
+|---|---|---|---|
+| `owntv-fork/` | — | Kotlin/Compose | OwnTV IPTV fork (v99.99.99 on the Hisense) + hot-reload |
+| `luaj-dropin/` | 38383 | Kotlin + Lua | Lua-over-HTTP control plane for any Android app |
+| `nuvio/` | — | Kotlin/JS | Nuvio IPTV apps (Android TV build on the Hisense) |
+| `android-mcp/` | — | TS (Node 22) | ADB device/UI/app control MCP; device profiles |
+| `android-activity-mcp/` | — | TS (Node 22) | activity enumerate/cache/launch over ADB |
+| `phone-mcp/` | — | Python | phone control MCP (ADB commands) |
+| `fennec-cdp/` | — | TS | Fennec (Firefox for Android) RDP→CDP on the Pixel |
+| `newblackdex/` | — | — | non-root dex unpacking tooling |
+
+### `kodi/` — Kodi addon fleet
+
+| Device | Subdir | Port | Notes |
+|---|---|---|---|
+| Kodi fleet | `kodi-fleet/` | 8080 (RPC) | CoreELEC 246 + Android-TV 225 addons |
+
+### `ops/` — fleet operations
+
+| Device | Subdir | Notes |
+|---|---|---|
+| Fleet chat | `fleet-chat/` | delendai orchestrated chat |
+| Fleet ops | `fleet-ops/` | watchdog + io-governor |
+
+### `webos/` — LG webOS TVs + AV
+
+| Device | Subdir | Port | Notes |
+|---|---|---|---|
+| LG fleet | `lg-fleet/` | — | LG TV lane (key/deploy/slate) + nuvio-webos IPTV products |
+| LG hot | `lg-hot/` | 18080 | live-reload + blue-green sync bridge |
+| Marantz | `marantz-audyssey/` | — | AV receiver control |
 
 ## Tooling
 
